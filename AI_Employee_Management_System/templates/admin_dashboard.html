@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+       <h1>AI Employee Management System</h1>
+    <h2>Admin Dashboard</h2>
+
+    <hr>
+
+    <h3>Employee Management</h3>
+
+    <ul>
+        <li><a href="{{  url_for('add_employee')  }}">Add Employee</a></li>
+        <li><a href="/view_employees">View Employees</a></li>
+        <li><a href="/update_employee">Update Employee</a></li>
+        <li><a href="/delete_employee">Delete Employee</a></li>
+        <li><a href="/upload_documents">Upload Documents</a></li>
+    </ul>
+
+    <hr>
+
+    <h3>Attendance Management</h3>
+
+    <ul>
+        <li><a href="/mark_attendance">Mark Attendance</a></li>
+        <li><a href="/view_attendance">View Attendance</a></li>
+    </ul>
+
+    <hr>
+
+    <h3>Salary Management</h3>
+
+    <ul>
+        <li><a href="/salary">Manage Salary</a></li>
+    </ul>
+
+    <hr>
+
+    <h3>Reports</h3>
+
+    <ul>
+        <li><a href="/reports">View Reports</a></li>
+    </ul>
+
+    <hr>
+
+    <a href="/">Logout</a>
+
+</body>
+</html>
