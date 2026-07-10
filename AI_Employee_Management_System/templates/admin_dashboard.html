@@ -14,10 +14,10 @@
 
     <ul>
         <li><a href="{{  url_for('add_employee')  }}">Add Employee</a></li>
-        <li><a href="/view_employees">View Employees</a></li>
-        <li><a href="/update_employee">Update Employee</a></li>
-        <li><a href="/delete_employee">Delete Employee</a></li>
-        <li><a href="/upload_documents">Upload Documents</a></li>
+        <li><a href="{{ url_for('view_employees') }}">View Employees</a></li>
+        <li><a href="{{ url_for('update_employee') }}">Update Employee</a></li>
+        <li><a href="{{ url_for('delete_employee') }}">Delete Employee</a></li>
+        <li><a href="{{ url_for('upload_documents') }}">Upload Documents</a></li>
     </ul>
 
     <hr>

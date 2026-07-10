@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Employees</title>
+</head>
+<body>
+
+    <h1>AI Employee Management System</h1>
+    <h2>Employee List</h2>
+
+    <hr>
+
+    <table border="1" cellpadding="10">
+
+        <tr>
+            <th>Employee ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Designation</th>
+            <th>Salary</th>
+        </tr>
+
+        <!-- Employee data will come from Flask -->
+        {% for employee in employees %}
+    <tr>
+        <td>{{ employee[0] }}</td>
+        <td>{{ employee[1] }}</td>
+        <td>{{ employee[2] }}</td>
+        <td>{{ employee[3] }}</td>
+        <td>{{ employee[4] }}</td>
+        <td>{{ employee[5] }}</td>
+    </tr>
+    {% endfor %}
+
+
+    </table>
+
+    <br>
+
+    <a href="{{ url_for('admin') }}">Back to Dashboard</a>
+
+</body>
+</html>

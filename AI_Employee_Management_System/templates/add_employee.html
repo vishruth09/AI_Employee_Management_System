@@ -12,9 +12,6 @@
 
     <form method="POST">
 
-        <label>Employee ID</label><br>
-        <input type="text" name="employee_id" required><br><br>
-
         <label>Name</label><br>
         <input type="text" name="name" required><br><br>
 
@@ -36,6 +33,6 @@
 
     <br>
 
-    <a href="/dashboard">Back to Dashboard</a>
+    <a href="{{ url_for('admin')}}">Back to Dashboard</a>
 </body>
 </html>

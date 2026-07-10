@@ -32,9 +32,58 @@ def login():
 def admin():
     return render_template("admin_dashboard.html")
 
-@app.route("/add_employee")
+@app.route("/add_employee", methods=['GET','POST'])
 def add_employee():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        department = request.form['department']
+        designation = request.form['designation']
+        salary = request.form['salary']
+
+        connection = get_connection()
+        cursor = connection.cursor()
+        query = """
+        INSERT INTO employees(name, email, department, designation, salary)
+        VALUES (%s, %s, %s, %s, %s)
+        """
+
+        cursor.execute(query ,(name,email,department,designation,salary))
+        connection.commit()
+
+        cursor.close()
+        connection.close()
+        return redirect(url_for("view_employees"))
+
     return render_template("add_employee.html")
+
+@app.route("/delete_employee")
+def delete_employee():
+    return render_template("delete_employee.html")
+
+@app.route("/view_employees")
+def view_employees():
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    query = "SELECT * FROM employees"
+    cursor.execute(query)
+
+    employees = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+    return render_template("view_employees.html",
+                           employees=employees
+                           )
+
+@app.route("/update_employee")
+def update_employee():
+    return render_template("update_employee.html")
+
+@app.route("/upload_documents")
+def upload_documents():
+    return render_template("upload_documents.html")
 
 
 
