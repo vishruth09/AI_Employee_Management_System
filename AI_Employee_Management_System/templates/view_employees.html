@@ -19,6 +19,8 @@
             <th>Department</th>
             <th>Designation</th>
             <th>Salary</th>
+            <th>Modify</th>
+            <th>Remove</th>
         </tr>
 
         <!-- Employee data will come from Flask -->
@@ -30,7 +32,12 @@
         <td>{{ employee[3] }}</td>
         <td>{{ employee[4] }}</td>
         <td>{{ employee[5] }}</td>
-    </tr>
+        <td>
+            <a href="/update_employee/{{ employee[0] }}">Edit</a>
+        </td>
+        <td>
+            <a href="/delete_employee/{{ employee[0] }}">Delete</a>
+        </td>
     {% endfor %}
 
 

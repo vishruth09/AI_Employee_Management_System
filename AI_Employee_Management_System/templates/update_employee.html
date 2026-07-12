@@ -12,23 +12,20 @@
 
     <form method="POST">
 
-        <label>Employee ID</label><br>
-        <input type="text" name="employee_id" required><br><br>
-
         <label>Name</label><br>
-        <input type="text" name="name"><br><br>
+        <input type="text" name="name" value="{{ employee.name }}"><br><br>
 
         <label>Email</label><br>
-        <input type="email" name="email"><br><br>
+        <input type="email" name="email" value="{{ employee.email }}"><br><br>
 
         <label>Department</label><br>
-        <input type="text" name="department"><br><br>
+        <input type="text" name="department" value  = "{{ employee.department }}"><br><br>
 
         <label>Designation</label><br>
-        <input type="text" name="designation"><br><br>
+        <input type="text" name="designation" value = "{{ employee.designation }}"><br><br>
 
         <label>Salary</label><br>
-        <input type="number" name="salary"><br><br>
+        <input type="number" name="salary"  value = "{{ employee.salary }}"><br><br>
 
         <button type="submit">Update Employee</button>
 
@@ -36,7 +33,7 @@
 
     <br>
 
-    <a href="/dashboard">Back to Dashboard</a>
+    <a href="{{ url_for('admin') }}">Back to Dashboard</a>
 
 </body>
 </html>

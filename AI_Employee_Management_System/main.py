@@ -57,10 +57,6 @@ def add_employee():
 
     return render_template("add_employee.html")
 
-@app.route("/delete_employee")
-def delete_employee():
-    return render_template("delete_employee.html")
-
 @app.route("/view_employees")
 def view_employees():
     connection = get_connection()
@@ -77,9 +73,78 @@ def view_employees():
                            employees=employees
                            )
 
-@app.route("/update_employee")
-def update_employee():
-    return render_template("update_employee.html")
+@app.route("/update_employee/<int:employee_id>",methods=['GET','POST'])
+def update_employee(employee_id):
+    if request.method == 'POST':
+        name = request.form["name"]
+        email = request.form["email"]
+        department = request.form["department"]
+        designation = request.form["designation"]
+        salary = request.form["salary"]
+
+        connection = get_connection()
+        cursor = connection.cursor()
+        query = """
+            UPDATE employees
+            SET
+                name=%s,
+                email=%s,
+                department=%s,
+                designation=%s,
+                salary=%s
+            WHERE employee_id=%s
+            """
+        cursor.execute(query,
+            (
+                name,
+                email,
+                department,
+                designation,
+                salary,
+                employee_id
+            )
+        )
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return redirect(url_for("view_employees"))
+
+
+    connection = get_connection()
+    cursor = connection.cursor(dictionary=True)
+    query = "SELECT * FROM employees WHERE employee_id = %s"
+    cursor.execute(query,(employee_id,))
+    employee = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return render_template("update_employee.html",
+                           employee = employee
+                           )
+
+@app.route("/delete_employee/<int:employee_id>",methods=['GET','POST'])
+def delete_employee(employee_id):
+    if request.method == 'POST':
+        connection = get_connection()
+        cursor = connection.cursor()
+        query = "DELETE FROM employees WHERE employee_id = %s"
+        cursor.execute(query,(employee_id,))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return redirect(url_for('view_employees'))
+
+    connection = get_connection()
+    cursor = connection.cursor(dictionary=True)
+    query = "SELECT * FROM employees WHERE employee_id = %s"
+    cursor.execute(query, (employee_id,))
+    employee = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return render_template("delete_employee.html",
+                           employee = employee
+                           )
+
+
 
 @app.route("/upload_documents")
 def upload_documents():
