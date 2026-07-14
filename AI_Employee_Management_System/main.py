@@ -152,5 +152,21 @@ def upload_documents():
 
 
 
+from datetime import date
+@app.route("/mark_attendence")
+def mark_attendence():
+    connection = get_connection()
+    cursor = connection.cursor(dictionary=True)
+    query = "SELECT * FROM employees"
+    cursor.execute(query)
+    employees = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    today_date = date.today()
+    return render_template(
+        "mark_attendence.html",employees=employees,today_date=today_date)
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)

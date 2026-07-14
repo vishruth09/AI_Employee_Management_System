@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Mark Attendance</title>
+</head>
+<body>
+
+    <h2>Mark Attendance</h2>
+
+    <p>
+        <strong>Today's Date :</strong> {{ today_date }}
+    </p>
+
+    <hr>
+
+    <form method="POST">
+
+        <table border="1" cellpadding="8">
+
+            <tr>
+                <th>Employee ID</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Status</th>
+            </tr>
+
+            {% for employee in employees %}
+
+            <tr>
+
+                <td>{{ employee.employee_id }}</td>
+
+                <td>{{ employee.name }}</td>
+
+                <td>{{ employee.department }}</td>
+
+                <td>
+                    <select name="status_{{ employee.employee_id }}">
+                        <option value="Present">Present</option>
+                        <option value="Absent">Absent</option>
+                        <option value="Leave">Leave</option>
+                        <option value="Half Day">Half Day</option>
+                    </select>
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+        <br>
+
+        <button type="submit">
+            Save Attendance
+        </button>
+
+    </form>
+
+</body>
+</html>
