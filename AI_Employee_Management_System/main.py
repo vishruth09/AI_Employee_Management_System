@@ -153,8 +153,51 @@ def upload_documents():
 
 
 from datetime import date
-@app.route("/mark_attendence")
-def mark_attendence():
+
+@app.route("/mark_attendance", methods=["GET", "POST"])
+def mark_attendance():
+
+    if request.method == "POST":
+        today_date = date.today()
+        connection = get_connection()
+        cursor = connection.cursor(dictionary=True)
+        query = """
+        SELECT *
+        FROM attendance
+        WHERE attendance_date = %s LIMIT 1
+        """
+        cursor.execute(query, (today_date,))
+        attendance = cursor.fetchone()
+        if attendance:
+            cursor.close()
+            connection.close()
+            return "Today's attendance has already been marked."
+
+        query = "SELECT * FROM employees"
+        cursor.execute(query)
+        employees = cursor.fetchall()
+        for employee in employees:
+            employee_id = employee["employee_id"]
+            status = request.form[f"status_{employee_id}"]
+            query = """
+            INSERT INTO attendance
+            (employee_id, attendance_date, status)
+            VALUES
+            (%s, %s, %s)
+            """
+            cursor.execute(
+                query,
+                (
+                    employee_id,
+                    today_date,
+                    status
+                )
+            )
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return redirect(url_for("admin"))
+
     connection = get_connection()
     cursor = connection.cursor(dictionary=True)
     query = "SELECT * FROM employees"
@@ -164,8 +207,10 @@ def mark_attendence():
     connection.close()
     today_date = date.today()
     return render_template(
-        "mark_attendence.html",employees=employees,today_date=today_date)
-
+        "mark_attendance.html",
+        employees=employees,
+        today_date=today_date
+    )
 
 
 if __name__ == "__main__":
