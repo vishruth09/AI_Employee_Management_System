@@ -206,10 +206,48 @@ def mark_attendance():
     cursor.close()
     connection.close()
     today_date = date.today()
+    formatted_date = today_date.strftime("%d-%m-%Y")
     return render_template(
         "mark_attendance.html",
         employees=employees,
-        today_date=today_date
+        formatted_date=formatted_date
+    )
+
+
+@app.route("/view_attendance", methods=["GET", "POST"])
+def view_attendance():
+
+    if request.method == "POST":
+        attendance_date = request.form["attendance_date"]
+    else:
+        attendance_date = date.today()
+
+    connection = get_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    query = """
+        SELECT
+            employees.employee_id,
+            employees.name,
+            employees.department,
+            attendance.attendance_date,
+            attendance.status
+        FROM attendance
+        JOIN employees
+            ON employees.employee_id = attendance.employee_id
+        WHERE attendance.attendance_date = %s
+    """
+
+    cursor.execute(query, (attendance_date,))
+    attendance = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return render_template(
+        "view_attendance.html",
+        attendance=attendance,
+        today_date=attendance_date
     )
 
 
