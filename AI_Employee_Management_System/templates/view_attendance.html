@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Attendance</title>
+</head>
+<body>
+
+    <h2>View Attendance</h2>
+
+    <hr>
+
+    <form method="POST">
+
+        <label>Select Date:</label>
+        <input type="date" name="attendance_date" value="{{ today_date }}">
+
+        <button type="submit">View Attendance</button>
+
+    </form>
+
+    <br>
+    <hr>
+
+    <table border="1" cellpadding="8">
+
+        <tr>
+            <th>Date</th>
+            <th>Employee ID</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Status</th>
+        </tr>
+
+        {% if attendance %}
+
+            {% for record in attendance %}
+            <tr>
+                <td>{{ record.attendance_date.strftime('%d-%m-%Y') }}</td>
+                <td>{{ record.employee_id }}</td>
+                <td>{{ record.name }}</td>
+                <td>{{ record.department }}</td>
+                <td>{{ record.status }}</td>
+            </tr>
+            {% endfor %}
+
+        {% else %}
+
+            <tr>
+                <td colspan="5" align="center">
+                    No attendance found for this date.
+                </td>
+            </tr>
+
+        {% endif %}
+
+    </table>
+
+    <br>
+
+    <a href="{{ url_for('admin') }}">Back to Dashboard</a>
+
+</body>
+</html>
