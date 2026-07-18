@@ -250,6 +250,59 @@ def view_attendance():
         today_date=attendance_date
     )
 
+@app.route("/edit_attendance/<int:employee_id>/<attendance_date>", methods=["GET", "POST"])
+def edit_attendance(employee_id, attendance_date):
+
+    if request.method == "POST":
+        status = request.form["status"]
+
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        query = """
+            UPDATE attendance
+            SET status = %s
+            WHERE employee_id = %s
+            AND attendance_date = %s
+        """
+
+        cursor.execute(query, (status, employee_id, attendance_date))
+
+        connection.commit()
+
+        cursor.close()
+        connection.close()
+
+        return redirect(url_for("view_attendance"))
+
+
+
+    connection = get_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    query = """
+        SELECT
+            e.employee_id,
+            e.name,
+            e.department,
+            a.attendance_date,
+            a.status
+        FROM attendance AS a
+        JOIN employees AS e
+            ON a.employee_id = e.employee_id
+        WHERE a.employee_id = %s
+        AND a.attendance_date = %s
+    """
+
+    cursor.execute(query, (employee_id, attendance_date))
+
+    attendance = cursor.fetchone()
+
+    cursor.close()
+    connection.close()
+
+    return render_template("edit_attendance.html",attendance=attendance)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

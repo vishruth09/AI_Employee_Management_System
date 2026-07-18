@@ -30,6 +30,7 @@
             <th>Name</th>
             <th>Department</th>
             <th>Status</th>
+            <th>Action</th>
         </tr>
 
         {% if attendance %}
@@ -41,13 +42,16 @@
                 <td>{{ record.name }}</td>
                 <td>{{ record.department }}</td>
                 <td>{{ record.status }}</td>
+                <td>
+                    <a href="/edit_attendance/{{ record.employee_id }}/{{ today_date }}">Edit</a>
+                </td>
             </tr>
             {% endfor %}
 
         {% else %}
 
             <tr>
-                <td colspan="5" align="center">
+                <td colspan="6" align="center">
                     No attendance found for this date.
                 </td>
             </tr>
