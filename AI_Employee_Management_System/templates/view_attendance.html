@@ -1,59 +1,317 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>View Attendance</title>
 </head>
+
 <body>
 
-    <h2>View Attendance</h2>
+    <h1 align="center">Attendance Management</h1>
 
     <hr>
 
     <form method="POST">
 
-        <label>Select Date:</label>
-        <input type="date" name="attendance_date" value="{{ today_date }}">
+        <label><strong>Select Date :</strong></label>
 
-        <button type="submit">View Attendance</button>
+        <input
+            type="date"
+            name="attendance_date"
+            value="{{ attendance_date }}"
+            required
+        >
+
+        <button type="submit">
+            View Attendance
+        </button>
 
     </form>
 
     <br>
+
     <hr>
+
+    <h2>Attendance Summary</h2>
+
+    <table border="1" cellpadding="10">
+
+        <tr>
+
+            <th>Present</th>
+
+            <th>Absent</th>
+
+            <th>Leave</th>
+
+            <th>Half Day</th>
+
+        </tr>
+
+        <tr>
+
+            <td align="center">
+                {{ present_count }}
+            </td>
+
+            <td align="center">
+                {{ absent_count }}
+            </td>
+
+            <td align="center">
+                {{ leave_count }}
+            </td>
+
+            <td align="center">
+                {{ half_day_count }}
+            </td>
+
+        </tr>
+
+    </table>
+
+    <br>
+
+    <hr>
+
+    <h2>Attendance Records</h2>
 
     <table border="1" cellpadding="8">
 
         <tr>
+
             <th>Date</th>
+
             <th>Employee ID</th>
+
             <th>Name</th>
+
             <th>Department</th>
+
             <th>Status</th>
-            <th>Action</th>
+
+            <th>Check In</th>
+
+            <th>Check Out</th>
+
+            <th>Late</th>
+
+            <th>Total Hours</th>
+
+            <th colspan="3">
+                Actions
+            </th>
+
         </tr>
 
         {% if attendance %}
 
             {% for record in attendance %}
+
             <tr>
-                <td>{{ record.attendance_date.strftime('%d-%m-%Y') }}</td>
-                <td>{{ record.employee_id }}</td>
-                <td>{{ record.name }}</td>
-                <td>{{ record.department }}</td>
-                <td>{{ record.status }}</td>
+
                 <td>
-                    <a href="/edit_attendance/{{ record.employee_id }}/{{ today_date }}">Edit</a>
+                    {{ record.attendance_date_display }}
                 </td>
+
+                <td>
+
+                    {{ record.employee_id }}
+
+                </td>
+
+                <td>
+
+                    {{ record.name }}
+
+                </td>
+
+                <td>
+
+                    {{ record.department }}
+
+                </td>
+
+                <td>
+
+                    {{ record.status }}
+
+                </td>
+
+                <td>
+
+                    {% if record.check_in %}
+
+                        {{ record.check_in_display }}
+
+                    {% else %}
+
+                        -
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    {% if record.check_out %}
+
+                        {{ record.check_out_display }}
+
+                    {% else %}
+
+                        -
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    {% if record.is_late %}
+
+                        Late
+
+                    {% else %}
+
+                        On Time
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    {% if record.total_hours %}
+
+                        {{ record.total_hours }} Hours
+
+                    {% else %}
+
+                        -
+
+                    {% endif %}
+
+                </td>
+
+                <!-- CHECK IN -->
+                <td>
+
+                    {% if record.status == "Present" %}
+
+                        {% if record.check_in %}
+
+                            <button disabled>
+
+                                Checked In
+
+                            </button>
+
+                        {% else %}
+
+                            <form action="{{ url_for('check_in', attendance_id=record.attendance_id) }}" method="POST">
+                                <button type="submit">
+
+                                    Check In
+
+                                </button>
+
+                            </form>
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <button disabled>
+
+                            Not Allowed
+
+                        </button>
+
+                    {% endif %}
+
+                </td>
+
+                <!-- CHECK OUT -->
+                <td>
+
+                    {% if record.status == "Present" %}
+
+                        {% if record.check_out %}
+
+                            <button disabled>
+
+                                Checked Out
+
+                            </button>
+
+                        {% elif record.check_in %}
+
+                            <form
+                                action="{{ url_for('check_out', attendance_id=record.attendance_id) }}"
+                                method="POST"
+                            >
+
+                                <button type="submit">
+
+                                    Check Out
+
+                                </button>
+
+                            </form>
+
+                        {% else %}
+
+                            <button disabled>
+
+                                Check In First
+
+                            </button>
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <button disabled>
+
+                            Not Allowed
+
+                        </button>
+
+                    {% endif %}
+
+                </td>
+
+
+                <!-- EDIT -->
+
+                <td>
+
+                    <a href="{{ url_for('edit_attendance',employee_id=record.employee_id,attendance_date=record.attendance_date) }}">
+                            Edit
+                        </a>
+
+                </td>
+
             </tr>
+
             {% endfor %}
 
         {% else %}
 
             <tr>
-                <td colspan="6" align="center">
-                    No attendance found for this date.
+
+                <td colspan="12" align="center">
+
+                    <h3>
+
+                        No Attendance Found
+
+                    </h3>
+
                 </td>
+
             </tr>
 
         {% endif %}
@@ -62,7 +320,22 @@
 
     <br>
 
-    <a href="{{ url_for('admin') }}">Back to Dashboard</a>
+    <hr>
+
+    <a href="{{ url_for('mark_attendance') }}">
+
+        Mark Today's Attendance
+
+    </a>
+
+    <br><br>
+
+    <a href="{{ url_for('admin') }}">
+
+        Back to Dashboard
+
+    </a>
 
 </body>
+
 </html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Monthly Attendance Report</title>
+
+    <style>
+
+        body{
+            font-family: Arial, sans-serif;
+            margin:40px;
+            background:#f5f5f5;
+        }
+
+        .container{
+            max-width:1000px;
+            margin:auto;
+            background:white;
+            padding:30px;
+            border-radius:10px;
+            box-shadow:0 0 10px rgba(0,0,0,.15);
+        }
+
+        h1,h2{
+            text-align:center;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:20px;
+        }
+
+        table,th,td{
+            border:1px solid #ccc;
+        }
+
+        th,td{
+            padding:10px;
+            text-align:center;
+        }
+
+        th{
+            background:#0d6efd;
+            color:white;
+        }
+
+        .section{
+            margin-top:35px;
+        }
+
+        .summary td{
+            text-align:left;
+        }
+
+        .back-btn{
+
+            display:inline-block;
+            margin-top:30px;
+            padding:10px 20px;
+            text-decoration:none;
+            background:#6c757d;
+            color:white;
+            border-radius:5px;
+
+        }
+
+        .back-btn:hover{
+            background:#5a6268;
+        }
+         .print-btn{
+
+            padding:10px 20px;
+            background:#198754;
+            color:white;
+            border:none;
+            border-radius:5px;
+            cursor:pointer;
+            margin-left:10px;
+
+        }
+
+        .print-btn:hover{
+
+            background:#157347;
+
+        }
+        @media print{
+                      body{
+            background:white;
+            margin:0;
+        }
+
+        .container{
+            box-shadow:none;
+            border:none;
+            max-width:100%;
+            padding:0;
+        }
+            .back-btn,
+            .print-btn{
+
+                display:none;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Monthly Attendance Report</h1>
+
+<h3 style="text-align:center;">
+    {{ month }} / {{ year }}
+</h3>
+
+<div class="section">
+
+<h2>Employee Information</h2>
+
+<table>
+
+<tr>
+    <th>Employee ID</th>
+    <td>{{ employee.employee_id }}</td>
+</tr>
+
+<tr>
+    <th>Name</th>
+    <td>{{ employee.name }}</td>
+</tr>
+
+<tr>
+    <th>Department</th>
+    <td>{{ employee.department }}</td>
+</tr>
+
+<tr>
+    <th>Designation</th>
+    <td>{{ employee.designation }}</td>
+</tr>
+
+</table>
+
+</div>
+
+<div class="section">
+
+<h2>Attendance Summary</h2>
+
+<table class="summary">
+
+<tr>
+
+    <th>Working Days</th>
+
+    <td>{{ working_days }}</td>
+
+</tr>
+
+<tr>
+
+    <th>Present</th>
+
+    <td>{{ present_count }}</td>
+
+</tr>
+
+<tr>
+
+    <th>Absent</th>
+
+    <td>{{ absent_count }}</td>
+
+</tr>
+
+<tr>
+
+    <th>Half Day</th>
+
+    <td>{{ half_day_count }}</td>
+
+</tr>
+
+<tr>
+
+    <th>Attendance Percentage</th>
+
+    <td>{{ "%.2f"|format(attendance_percentage) }}%</td>
+
+</tr>
+
+</table>
+
+</div>
+
+<div class="section">
+
+<h2>Daily Attendance</h2>
+
+<table>
+
+<tr>
+
+    <th>Date</th>
+
+    <th>Status</th>
+
+</tr>
+
+{% for record in attendance_records %}
+
+<tr>
+
+    <td>{{ record.attendance_date.strftime("%d-%b-%Y") }}</td>
+
+    <td>{{ record.status }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+<a href="{{ url_for('monthly_report') }}" class="back-btn">
+
+Back
+
+</a>
+    <button onclick="window.print()" class="print-btn">
+        Print Report
+    </button>
+
+</div>
+
+</body>
+
+</html>

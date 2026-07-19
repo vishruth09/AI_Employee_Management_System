@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Monthly Attendance Report</title>
+</head>
+<body>
+
+    <h2>Generate Monthly Attendance Report</h2>
+
+    <form method="POST">
+
+        <label>Employee</label><br>
+
+        <select name="employee_id" required>
+
+            <option value="">Select Employee</option>
+
+            {% for employee in employees %}
+                <option value="{{ employee.employee_id }}">
+                    {{ employee.name }}
+                </option>
+            {% endfor %}
+
+        </select>
+
+        <br><br>
+
+        <label>Month</label><br>
+
+        <select name="month" required>
+
+            <option value="">Select Month</option>
+
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+
+        </select>
+
+        <br><br>
+
+        <label>Year</label><br>
+
+        <select name="year" required>
+
+            <option value="">Select Year</option>
+
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
+
+        </select>
+
+        <br><br>
+
+        <button type="submit">
+            Generate Report
+        </button>
+
+    </form>
+    <br>
+<a href="{{ url_for('admin')}}">Back to Dashboard</a>
+
+</body>
+</html>

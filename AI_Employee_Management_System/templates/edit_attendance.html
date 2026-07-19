@@ -24,7 +24,7 @@
                     <label class="form-label">Attendance Date</label>
                     <input type="text"
                            class="form-control"
-                           value = "{{ attendance.attendance_date }}"
+                           value = "{{ attendance.attendance_date_display }}"
                            readonly>
                 </div>
 
@@ -74,7 +74,7 @@
                     Update Attendance
                 </button>
 
-                <a href="{{ url_for('view_attendance') }}" class="btn btn-secondary">
+                <a href="{{ url_for('view_attendance',attendance_date=attendance.attendance_date.strftime('%Y-%m-%d')) }}" class="btn btn-secondary">
                     Cancel
                 </a>
 
