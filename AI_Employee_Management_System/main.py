@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request,redirect,url_for,flash
 from database.connection import get_connection
 from werkzeug.security import generate_password_hash,check_password_hash
+import calendar
 
 
 app = Flask(__name__)
@@ -619,6 +620,7 @@ def monthly_report():
         cursor.execute(query, (employee_id,))
 
         employee = cursor.fetchone()
+        month_name = calendar.month_name[int(month)]
         cursor.close()
         connection.close()
         return render_template(
@@ -631,7 +633,9 @@ def monthly_report():
             working_days=working_days,
             attendance_percentage=attendance_percentage,
             month=month,
-            year=year
+            month_name=month_name,
+            year=year,
+            source = "report"
         )
 
     connection = get_connection()
@@ -649,6 +653,228 @@ def monthly_report():
     cursor.close()
     connection.close()
     return render_template("monthly_report.html", employees=employees)
+
+@app.route("/monthly_report/<int:employee_id>/<int:month>/<int:year>")
+def monthly_report_view(employee_id, month, year):
+    source = request.args.get("source")
+    connection = get_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    query = """
+    SELECT attendance_date, status
+    FROM attendance
+    WHERE employee_id = %s
+    AND MONTH(attendance_date) = %s
+    AND YEAR(attendance_date) = %s
+    ORDER BY attendance_date;
+    """
+
+    cursor.execute(query, (employee_id, month, year))
+
+    attendance_records = cursor.fetchall()
+
+    present_count = 0
+    absent_count = 0
+    half_day_count = 0
+
+    for record in attendance_records:
+
+        if record["status"] == "Present":
+            present_count += 1
+
+        elif record["status"] == "Absent":
+            absent_count += 1
+
+        elif record["status"] == "Half Day":
+            half_day_count += 1
+
+    working_days = len(attendance_records)
+
+    if working_days > 0:
+
+        attendance_percentage = (
+            (present_count + (half_day_count * 0.5))
+            / working_days
+        ) * 100
+
+    else:
+
+        attendance_percentage = 0
+
+    query = """
+    SELECT *
+    FROM employees
+    WHERE employee_id = %s
+    """
+
+    cursor.execute(query, (employee_id,))
+
+    employee = cursor.fetchone()
+    month_name = calendar.month_name[month]
+
+    cursor.close()
+    connection.close()
+
+    return render_template(
+
+        "monthly_report_view.html",
+
+        employee=employee,
+
+        attendance_records=attendance_records,
+
+        present_count=present_count,
+
+        absent_count=absent_count,
+
+        half_day_count=half_day_count,
+
+        working_days=working_days,
+
+        attendance_percentage=attendance_percentage,
+
+        month=month,
+        month_name=month_name,
+
+        year=year,
+        source=source
+
+    )
+
+@app.route("/monthly_summary",methods=['POST','GET'])
+def monthly_summary():
+    if  request.method == 'POST':
+        month = request.form["month"]
+        year = request.form["year"]
+        connection = get_connection()
+        cursor = connection.cursor(dictionary=True)
+        query = """
+        SELECT
+
+        e.employee_id,
+        e.name,
+        e.department,
+
+        SUM(
+        CASE
+        WHEN a.status='Present'
+        THEN 1
+        ELSE 0
+        END
+        ) AS present_count,
+
+        SUM(
+        CASE
+        WHEN a.status='Absent'
+        THEN 1
+        ELSE 0
+        END
+        ) AS absent_count,
+
+        SUM(
+        CASE
+        WHEN a.status='Half Day'
+        THEN 1
+        ELSE 0
+        END
+        ) AS half_day_count
+
+        FROM employees e
+
+        JOIN attendance a
+        ON e.employee_id = a.employee_id
+
+        WHERE MONTH(a.attendance_date)=%s
+        AND YEAR(a.attendance_date)=%s
+
+        GROUP BY
+        e.employee_id,
+        e.name,
+        e.department
+
+        ORDER BY
+        e.employee_id;
+        """
+        cursor.execute(query,(month,year))
+        summary = cursor.fetchall()
+        month_name = calendar.month_name[int(month)]
+        cursor.close()
+        connection.close()
+        return render_template(
+            "monthly_summary_view.html",
+            summary=summary,
+            month=month,
+            month_name=month_name,
+            year=year,
+        )
+
+    return render_template('monthly_summary.html')
+
+@app.route("/monthly_summary/<int:month>/<int:year>")
+def monthly_summary_view(month,year):
+
+    connection = get_connection()
+    cursor = connection.cursor(dictionary=True)
+    query = """
+        SELECT
+
+        e.employee_id,
+        e.name,
+        e.department,
+
+        SUM(
+        CASE
+        WHEN a.status='Present'
+        THEN 1
+        ELSE 0
+        END
+        ) AS present_count,
+
+        SUM(
+        CASE
+        WHEN a.status='Absent'
+        THEN 1
+        ELSE 0
+        END
+        ) AS absent_count,
+
+        SUM(
+        CASE
+        WHEN a.status='Half Day'
+        THEN 1
+        ELSE 0
+        END
+        ) AS half_day_count
+
+        FROM employees e
+
+        JOIN attendance a
+        ON e.employee_id = a.employee_id
+
+        WHERE MONTH(a.attendance_date)=%s
+        AND YEAR(a.attendance_date)=%s
+
+        GROUP BY
+        e.employee_id,
+        e.name,
+        e.department
+
+        ORDER BY
+        e.employee_id;
+        """
+    cursor.execute(query,(month,year))
+    summary = cursor.fetchall()
+    month_name = calendar.month_name[month]
+    cursor.close()
+    connection.close()
+    return render_template(
+            "monthly_summary_view.html",
+            summary=summary,
+            month=month,
+            month_name=month_name,
+            year=year,
+        )
+
 
 
 if __name__ == "__main__":

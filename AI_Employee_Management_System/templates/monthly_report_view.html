@@ -118,7 +118,7 @@
 <h1>Monthly Attendance Report</h1>
 
 <h3 style="text-align:center;">
-    {{ month }} / {{ year }}
+    {{ month_name }} / {{ year }}
 </h3>
 
 <div class="section">
@@ -230,12 +230,21 @@
 </table>
 
 </div>
+{% if source == "report" %}
 
-<a href="{{ url_for('monthly_report') }}" class="back-btn">
+    <a class="back-btn" href="{{ url_for('monthly_report') }}">
+    Back
+    </a>
 
-Back
+{% else %}
 
-</a>
+
+    <a class="back-btn" href="{{ url_for('monthly_summary_view',month=month,year=year) }}">
+    Back
+    </a>
+
+
+{% endif %}
     <button onclick="window.print()" class="print-btn">
         Print Report
     </button>
